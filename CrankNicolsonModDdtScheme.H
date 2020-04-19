@@ -37,6 +37,7 @@ SourceFiles
 #define CrankNicolsonModDdtScheme_H
 
 #include "ddtScheme.H"
+#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,6 +71,10 @@ class CrankNicolsonModDdtScheme
         template<class GeoField>
         scalar deltaT0_(const GeoField&) const;
 
+        //- Off-centering coefficient function
+        //  1 -> CN, less than one blends with EI
+        autoPtr<Function1<scalar>> ocCoeff_;
+
         //- Disallow default bitwise copy construct
         CrankNicolsonModDdtScheme(const CrankNicolsonModDdtScheme&);
 
@@ -84,33 +89,12 @@ public:
 
 
     // Constructors
-
         //- Construct from mesh
-        CrankNicolsonModDdtScheme(const fvMesh& mesh)
-        :
-            ddtScheme<Type>(mesh)
-        {
-            // Ensure the old-old-time cell volumes are available
-            // for moving meshes
-            if (mesh.moving())
-            {
-                mesh.V00();
-            }
-        }
+        CrankNicolsonModDdtScheme(const fvMesh& mesh);
 
         //- Construct from mesh and Istream
-        CrankNicolsonModDdtScheme(const fvMesh& mesh, Istream& is)
-        :
-            ddtScheme<Type>(mesh, is)
-        {
-            // Ensure the old-old-time cell volumes are available
-            // for moving meshes
-            if (mesh.moving())
-            {
-                mesh.V00();
-            }
-        }
-
+        CrankNicolsonModDdtScheme(const fvMesh& mesh, Istream& is);
+        
 
     // Member Functions
 
@@ -118,6 +102,12 @@ public:
         const fvMesh& mesh() const
         {
             return fv::ddtScheme<Type>::mesh();
+        }
+
+        //- Return the current off-centreing coefficient
+        scalar ocCoeff() const
+        {
+            return ocCoeff_->value(mesh().time().value());
         }
 
         tmp<GeometricField<Type, fvPatchField, volMesh>> fvcDdt
