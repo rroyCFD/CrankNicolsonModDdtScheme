@@ -37,7 +37,7 @@ SourceFiles
 #define CrankNicolsonModDdtScheme_H
 
 #include "ddtScheme.H"
-#include "Function1.H"
+#include "Function1Mesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,7 +73,7 @@ class CrankNicolsonModDdtScheme
 
         //- Off-centering coefficient function
         //  1 -> CN, less than one blends with EI
-        autoPtr<Function1<scalar>> ocCoeff_;
+        autoPtr<Function1Mesh<scalar>> ocCoeff_;
 
         //- Disallow default bitwise copy construct
         CrankNicolsonModDdtScheme(const CrankNicolsonModDdtScheme&);

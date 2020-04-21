@@ -75,7 +75,7 @@ template<class Type>
 CrankNicolsonModDdtScheme<Type>::CrankNicolsonModDdtScheme(const fvMesh& mesh)
 :
     ddtScheme<Type>(mesh),
-    ocCoeff_(new Function1Types::Constant<scalar>("ocCoeff", 1))
+    ocCoeff_(new Function1MeshTypes::Constant<scalar>("ocCoeff", 1))
 {
     // Ensure the old-old-time cell volumes are available
     // for moving meshes
@@ -110,7 +110,7 @@ CrankNicolsonModDdtScheme<Type>::CrankNicolsonModDdtScheme
                 << exit(FatalIOError);
         }
 
-        ocCoeff_ = new Function1Types::Constant<scalar>
+        ocCoeff_ = new Function1MeshTypes::Constant<scalar>
         (
             "ocCoeff",
             ocCoeff
@@ -120,7 +120,7 @@ CrankNicolsonModDdtScheme<Type>::CrankNicolsonModDdtScheme
     {
         is.putBack(firstToken);
         dictionary dict(is);
-        ocCoeff_ = Function1<scalar>::New("ocCoeff", dict);
+        ocCoeff_ = Function1Mesh<scalar>::New("ocCoeff", dict, mesh);
     }
 
     // Ensure the old-old-time cell volumes are available
