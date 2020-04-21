@@ -66,7 +66,7 @@ class CrankNicolsonModDdtScheme
         //- Return the previous time-step
         scalar deltaT0_() const;
 
-        //- Return the previous time-step or great if the old timestep field
+        //- Return the previous time-step or the old timestep, if field
         //  wasn't available in which case Euler ddt is used
         template<class GeoField>
         scalar deltaT0_(const GeoField&) const;

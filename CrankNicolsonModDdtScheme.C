@@ -60,7 +60,7 @@ scalar CrankNicolsonModDdtScheme<Type>::deltaT0_(const GeoField& vf) const
 {
     if (vf.nOldTimes() < 2)
     {
-        return great;
+        return deltaT_();
     }
     else
     {
@@ -154,8 +154,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_();
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     if (mesh().moving())
@@ -222,8 +225,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(vf);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     if (mesh().moving())
@@ -294,8 +300,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(vf);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     if (mesh().moving())
@@ -366,8 +375,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(vf);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     if (mesh().moving())
@@ -442,8 +454,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(vf);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     if (mesh().moving())
@@ -538,8 +553,11 @@ CrankNicolsonModDdtScheme<Type>::fvmDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(vf);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     fvm.diag() = (coefft*rDeltaT)*mesh().V();
@@ -561,6 +579,13 @@ CrankNicolsonModDdtScheme<Type>::fvmDdt
           - coefft00*vf.oldTime().oldTime().primitiveField()
         );
     }
+
+    Info<< " deltaT: "      << deltaT
+        << " deltaT0: "     << deltaT0
+        << " cnCoeff: "     << cnCoeff_
+        << " coefft: "      << coefft 
+        << " coefft0: "     << coefft0 
+        << " coefft00: "    << coefft00 << endl;
 
     return tfvm;
 }
@@ -589,8 +614,11 @@ CrankNicolsonModDdtScheme<Type>::fvmDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(vf);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     fvm.diag() = (coefft*rDeltaT*rho.value())*mesh().V();
@@ -640,8 +668,11 @@ CrankNicolsonModDdtScheme<Type>::fvmDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(vf);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     fvm.diag() = (coefft*rDeltaT)*rho.primitiveField()*mesh().V();
@@ -695,8 +726,11 @@ CrankNicolsonModDdtScheme<Type>::fvmDdt
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(vf);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     fvm.diag() =
@@ -750,8 +784,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdtUfCorr
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(U);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     return tmp<fluxFieldType>
@@ -794,8 +831,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdtPhiCorr
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(U);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     return tmp<fluxFieldType>
@@ -837,8 +877,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdtUfCorr
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(U);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     if
@@ -948,8 +991,11 @@ CrankNicolsonModDdtScheme<Type>::fvcDdtPhiCorr
     scalar deltaT = deltaT_();
     scalar deltaT0 = deltaT0_(U);
 
-    scalar coefft   = 1 + deltaT/(deltaT + deltaT0);
-    scalar coefft00 = deltaT*deltaT/(deltaT0*(deltaT + deltaT0));
+    scalar cnCoeff_ = 1./(1.+ ocCoeff()); // CrankNicolson coeffs
+    scalar euCoeff_ = (cnCoeff_ - 1); // Euler coeffs
+
+    scalar coefft   = cnCoeff_*(2.*deltaT)       /(deltaT + deltaT0);
+    scalar coefft00 = euCoeff_*(2.*deltaT*deltaT)/(deltaT0*(deltaT + deltaT0));
     scalar coefft0  = coefft + coefft00;
 
     if
