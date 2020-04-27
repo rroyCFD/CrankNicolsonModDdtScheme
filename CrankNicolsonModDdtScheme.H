@@ -5,8 +5,13 @@
     \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
+Author:
+- Rajib Roy
+- University of Wyoming
+- rroy@uwyo.edu, roy.rajib@live.com
+
 License
-    This file is part of OpenFOAM.
+    This file is compatible with OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -25,8 +30,40 @@ Class
     Foam::fv::CrankNicolsonModDdtScheme
 
 Description
-    Second-order CrankNicolsonMod-differencing ddt using the current and
-    two previous time-step values.
+    Second-order CrankNicolsonMod-differencing implicit ddt using the current and two previous time-step values.
+
+    The Crank-Nicolson scheme is often unstable for complex flows in complex
+    geometries and it is necessary to "off-centre" the scheme (i.e. blend with Euler-implicit scheme) to stabilize it while retaining greater temporal accuracy than the first-order Euler-implicit scheme.  
+
+    Off-centering is specified via the mandatory coefficient \c ocCoeff in the range [0,1] following the scheme name e.g.
+    \verbatim
+    ddtSchemes
+    {
+        default         CrankNicolsonMod 0.9;
+    }
+    \endverbatim
+    
+    or with an optional "damp" function to dynamically blend (basded on maximum Courant number (maxCo)) from the pure/blended Crank-Nicolson schme towards Euler-implicit scheme. Blending begins when the maxCo exceeds the threshold value and finaly drives the ocCoeff when maxCo is equal or higher than maximum permitted Corant number (maxValue). The nature of blend parmeter depends on the damping function (linear, quadratic, cosine, exponential, etc.), e.g.
+
+    ocCoeff
+    {
+        type            scale;
+
+        scale
+        {
+            type            linearDampCFL; 
+            // type            exp10DampCFL; 
+            // type            quadraticDampCFL;
+            // type            halfCosineDampCFL;
+            start           0;
+            thresholdValue  0.50;
+            maxValue        1.00;
+        }
+
+        value           1.0; // constValue
+    };
+    
+    Need Function1Mesh class to utilize the dammping functions.
 
 SourceFiles
     CrankNicolsonModDdtScheme.C
